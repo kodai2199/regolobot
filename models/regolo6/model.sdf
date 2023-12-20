@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="regolo6">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://regolo6/meshes/regolo6.stl</uri>
+            <scale>0.1 0.1 0.1</scale>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://regolo6/meshes/regolo6.stl</uri>
+            <scale>0.1 0.1 0.1</scale>
+          </mesh>
+        </geometry>
+                <material> <!-- Wheel material -->
+          <ambient>0 0.65 0.19 1</ambient>
+          <diffuse>0.1 0.1 0.2 1</diffuse>
+          <specular>0 0 0 0</specular>
+          <emissive>0 0 0 1</emissive>
+        </material> <!-- End wheel material -->
+      </visual>
+    </link>
+  </model>
+</sdf>
