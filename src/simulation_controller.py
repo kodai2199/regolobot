@@ -4,6 +4,7 @@ import rospy
 from std_msgs.msg import String
 from regolobot.srv import SpawnModel
 import random
+import math
 
 #TODO export GAZEBO_MODEL_PATH = package/models dir
 #https://answers.ros.org/question/404423/whats-the-correct-way-to-load-mesh-files-in-gazebo-and-rviz/
@@ -11,18 +12,30 @@ import random
 
 BASE_FILE_PATH = "models/regolo"
 regoli = [i for i in range(1, 11)]
+spawned_models = []
 
+class Regolo:
+    def __init__(number, x, y, z, base_length=0.1, base_width=0.1, base_height=0.1) -> None:
+        pass
+
+# SE x -1,8 y -0,4 z 1
+# NE x -1,8 y -2,1 z 1
+# NW x 1,9  y -2,1 z 1
+# SW x 1,9  y -0,4 z 1
+
+# X interval of 3,7
+# Y interval of 1,7
 
 def spawn_random_model(proxy, counter):
     regolo = random.choice(regoli)
     nome = f"regolo{counter}"
     file = f"{BASE_FILE_PATH}{regolo}/model.sdf"
-    x = random.random() * 3
-    y = random.random() * 3
-    z = random.random() * 3
-    roll = random.random() * 5
-    pitch = random.random() * 5
-    yaw = random.random() * 5
+    x = (random.random() * 3.7) - 1.8
+    y = (random.random() * 1.7) - 2.1
+    z = 1 #random.random() * 3
+    roll = random.random() * math.pi
+    pitch = math.pi/2
+    yaw = 0 #random.random() * 0
     try:
         proxy(nome, file, x, y, z, roll, pitch, yaw, 0, 0, 0)
         rospy.loginfo(f"Spawned new regolo{regolo}")
