@@ -18,6 +18,8 @@ def get_pose(r: SpawnModelRequest):
 
 def spawn_model_handler(r: SpawnModelRequest):
     model_file = Path(r.model_path)
+    print(r.model_path)
+    print(Path.cwd())
     if model_file.is_file():
         f = open(model_file, 'r')
         model_xml = f.read()

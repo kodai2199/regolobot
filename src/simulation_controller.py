@@ -10,7 +10,7 @@ import math
 #https://answers.ros.org/question/404423/whats-the-correct-way-to-load-mesh-files-in-gazebo-and-rviz/
 # FOR SCALING https://answers.gazebosim.org/question/16774/resize-simple-objects-to-specific-sizes/
 
-BASE_FILE_PATH = "models/regolo"
+BASE_FILE_PATH = "/home/elisa/ws_moveit/src/regolobot/models/regolo"
 regoli = [i for i in range(1, 11)]
 spawned_models = []
 
