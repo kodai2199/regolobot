@@ -131,21 +131,47 @@ class MyRobot:
 
 def main():
 
+    #Create a new arm object from the MyRobot class
     arm = MyRobot("arm_group")
-
-    # Call the function to set the position to "zero_pose"
-    arm.set_pose("zero_pos")
+    hand =  MyRobot("hand")    
+    #call the function to set the position to "zero_pose"
+    arm.set_pose("zero_pose")
+    #Wait for 2 seconds
+    rospy.sleep(1)
+    
+    arm.set_pose("straight_up")
+    rospy.sleep(1)
+    
+    #Open the gripper or end effector
+    hand.set_pose("hand_opened")
     rospy.sleep(1)
 
-    # Call the function to move the end effector to a specific position (x, y)
-    arm.move_end_effector_to_position(1, 1, 0.8)  # Example position, adjust as needed
-    rospy.sleep(1)
+    #Here, we will repeat the cycle of setting to various positions, simulating the pick and place action
+    while not rospy.is_shutdown():
+    
+    	#Go to Lift Object Pose
+        arm.set_pose("lift_object")
+        rospy.sleep(1)
+        
+        #Go to Pick Object Pose
+        arm.set_pose("pick_object")
+        rospy.sleep(1)
+        
+        #Close the gripper or end effector
+        hand.set_pose("hand_closed")
+        rospy.sleep(1)       
+        
+        #Go to drop Object Pose
+        arm.set_pose("drop_object")
+        rospy.sleep(1)
+        
+        #Open the gripper or end effector
+        hand.set_pose("hand_opened")
+        rospy.sleep(1)        
 
-    # Wait for 2 seconds
-    rospy.sleep(1)
-
-    # Delete the arm object at the end of code
+    #delete the arm object at the end of code
     del arm
+    del hand
 
 	
 
