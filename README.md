@@ -1,6 +1,6 @@
 COME FARE PARTIRE IL TUTTO (credo):  
 
-oss: le due cartelle che ho aggiunto moveit_robot_arm_sim e robot_arm_urdf forse devono essere due pacchetti separati, quindi forse vanno messi in *workspace moveit*/src  
+oss: le due cartelle che ho aggiunto moveit_robot_arm_sim e robot_arm_urdf forse devono essere due pacchetti separati, quindi forse vanno messi in <workspace moveit>/src  
 
 1. un catkin build non ha mai ammazzato nessuno  
 2. in tutti i terminali che apri sempre source/devel/setup.bash  
