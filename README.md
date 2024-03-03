@@ -13,3 +13,9 @@ oss: le due cartelle che ho aggiunto moveit_robot_arm_sim e robot_arm_urdf forse
 6. far partire la simulazione del robot:
    chmod a+x /home/$USERNAME/ws_moveit/src/moveit_robot_arm_sim/node_set_prefined_pose.py 
    rosrun moveit_robot_arm_sim node_set_prefined_pose.py (altro terminale)
+
+
+Altre cose utili:
+- dove trovare le pose predefinite per cambiarle/aggiungerle: moveit_robot_arm_sim / config / robot_arm_urdf.srdf
+- Group_Names: arm_group, hand
+- pose importanti: hand_open, hand_closed
