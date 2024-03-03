@@ -18,24 +18,30 @@ class Regolo:
     def __init__(number, x, y, z, base_length=0.1, base_width=0.1, base_height=0.1) -> None:
         pass
 
-# SE x -1,8 y -0,4 z 1
-# NE x -1,8 y -2,1 z 1
-# NW x 1,9  y -2,1 z 1
-# SW x 1,9  y -0,4 z 1
 
-# X interval of 3,7
-# Y interval of 1,7
+#boundaries
+min_x = 0.6
+max_x = 1.5
+min_y = -1.6
+max_y = -0.4
+
+def generate_coordinates():
+    x = random.uniform(min_x, max_x)
+    y = random.uniform(min_y, max_y)
+    
+    return x, y
+
+
 
 def spawn_random_model(proxy, counter):
     regolo = random.choice(regoli)
     nome = f"regolo{counter}"
     file = f"{BASE_FILE_PATH}{regolo}/model.sdf"
-    x = (random.random() * 3.7) - 1.8
-    y = (random.random() * 1.7) - 2.1
-    z = 1 #random.random() * 3
-    roll = random.random() * math.pi
+    x, y = generate_coordinates()
+    z = 0.7
+    roll = math.pi
     pitch = math.pi/2
-    yaw = 0 #random.random() * 0
+    yaw = 0
     try:
         proxy(nome, file, x, y, z, roll, pitch, yaw, 0, 0, 0)
         rospy.loginfo(f"Spawned new regolo{regolo}")
