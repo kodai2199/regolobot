@@ -19,3 +19,6 @@ Altre cose utili:
 - dove trovare le pose predefinite per cambiarle/aggiungerle: moveit_robot_arm_sim / config / robot_arm_urdf.srdf
 - Group_Names: arm_group, hand
 - pose importanti: hand_open, hand_closed
+- see the parsing of robot:
+  cd ~/ws_moveit/src/robot_arm_urdf/urdf
+  check_urdf robot_arm_urdf.urdf
