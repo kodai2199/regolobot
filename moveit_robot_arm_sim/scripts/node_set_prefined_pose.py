@@ -135,7 +135,7 @@ def main():
     arm = MyRobot("arm_group")
     hand =  MyRobot("hand")    
     #call the function to set the position to "zero_pose"
-    arm.set_pose("zero_pose")
+    arm.set_pose("zero_pos")
     #Wait for 2 seconds
     rospy.sleep(1)
     
