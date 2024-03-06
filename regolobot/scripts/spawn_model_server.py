@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from regolobot.srv import SpawnModel, SpawnModelResponse, SpawnModelRequest
 import rospy
 from geometry_msgs.msg import Pose, Quaternion
