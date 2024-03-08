@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-
 # Include the necessary libraries
 import sys
 import copy
@@ -106,39 +105,28 @@ class MyRobot:
         rospy.loginfo("\033[32m" + "Now at Pose: {}".format(arg_pose_name) + "\033[0m")
 
     def move_ee(self, x, y, z):
+        pose_start = self._group.get_current_pose().pose
+        pose_start.position.x += 0.001
+        pose_start.position.y += 0.001
+        pose_start.position.z += 0.001
 
-        joint_goal = self._group.get_current_joint_values()
-        joint_goal[0] = 0
-        joint_goal[1] = tau / 6
-        joint_goal[2] = 0
-        joint_goal[3] = -tau / 6
-        joint_goal[4] = 0
-        self._group.go(joint_goal, wait=True)
-        self._group.stop()
 
-        self._group.set_planner_id("RRTConnect")
         pose_goal = geometry_msgs.msg.Pose()
-        pose_goal.orientation.w = 1.0
-        pose_goal.orientation.x = 0.0
-        pose_goal.orientation.y = 0.0
-        pose_goal.orientation.z = 0.0
+        pose_goal.orientation.w = 1
+        pose_goal.orientation.x = 0
+        pose_goal.orientation.y = 0
+        pose_goal.orientation.z = 0
         pose_goal.position.x = x
         pose_goal.position.y = y
         pose_goal.position.z = z
         # pose_goal.orientation.
 
+        self._group.set_planner_id("RRTConnect")
         # self._group.set_pose_target(pose_goal)
         self._group.stop()
         self._group.clear_pose_targets()
-        # self._group.set_joint_value_target(pose_goal, arg3=True)
-        self._group.set_pose_target(pose_goal)
-        plan_success, plan, planning_time, error_code = self._group.plan()
-        print(plan_success, plan, planning_time, error_code)
-        # self._group.stop()
-        # self._group.clear_pose_targets()
-        # plan_success, plan, planning_time, error_code = self._group.plan()
 
-        # Create a goal message object for the action server
+        plan, fraction = self._group.compute_cartesian_path([pose_start, pose_goal], 0.005, 0)
         goal = moveit_msgs.msg.ExecuteTrajectoryGoal()
         # Update the trajectory in the goal message
         goal.trajectory = plan
@@ -158,10 +146,10 @@ class MyRobot:
 def main():
 
     # Create a new arm object from the MyRobot class
-    arm = MyRobot("arm_group")
-    hand = MyRobot("hand")
+    arm = MyRobot("manipulator")
+    hand = MyRobot("gripper")
     print(type(arm._group))
-    arm.move_ee(0.6, 0.5, 0.95)
+    arm.move_ee(0.3, 0.5, 1)
     # call the function to set the position to "zero_pose"
 
     # Wait for 2 seconds
