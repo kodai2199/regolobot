@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: regolobot_ur5e_description
+    relative_path: urdf/ur.xacro
+    xacro_args: robot_model:=ur5e joint_limit_params:=/home/ros/ws_moveit/src/universal_robot/ur_description/config/ur5e/joint_limits.yaml kinematics_params:=/home/ros/ws_moveit/src/universal_robot/ur_description/config/ur5e/default_kinematics.yaml physical_params:=/home/ros/ws_moveit/src/universal_robot/ur_description/config/ur5e/physical_parameters.yaml visual_params:=/home/ros/ws_moveit/src/universal_robot/ur_description/config/ur5e/visual_parameters.yaml
+  SRDF:
+    relative_path: config/ur5e.srdf
+  CONFIG:
+    author_name: Giulio Ganzerli, Elisa Zanni
+    author_email: ganzerli.giulio.99@gmail.com
+    generated_timestamp: 1709857511

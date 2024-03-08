@@ -1,0 +1,6 @@
+universal_robot
+.rosinstall
+.rosinstall.bak
+.vscode
+regolobot/train
+*__pycache__*
