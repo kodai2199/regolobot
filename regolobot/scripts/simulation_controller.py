@@ -75,7 +75,7 @@ def loop():
             print(
                 f"Spawned {len(stick_manager.spawned_models)} mathsticks for image {epoch + 1}"
             )
-            stick_manager.save_labels(label_path / f"{epoch}.txt")
+            stick_manager.save_labels(label_path / f"{epoch+1}.txt")
             color_converter.save()
             depth_converter.save()
         stick_manager.delete_all()

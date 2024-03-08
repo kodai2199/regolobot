@@ -115,6 +115,7 @@ class MathStickManager:
             rospy.loginfo(f"Spawned a new math stick: {name}")
             self.spawned_models.append(math_stick)
             self.spawned_counter += 1
+            rospy.sleep(0.5)
         except rospy.ServiceException as e:
             rospy.loginfo(f"Error while calling Spawn Model Service. Details: {e}")
         return self.spawned_counter

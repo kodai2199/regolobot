@@ -9,7 +9,7 @@ from pathlib import Path
 
 class ImageConverter:
     def __init__(
-        self, topic: str, output_dir: Path, depth: bool = False, counter: int = 0
+        self, topic: str, output_dir: Path, depth: bool = False, counter: int = 1
     ):
         self.output_dir = output_dir
         self.depth = depth

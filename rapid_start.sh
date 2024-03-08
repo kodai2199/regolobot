@@ -5,5 +5,6 @@ roslaunch regolobot_moveit_config simulation.launch &
 sleep 10
 rosrun regolobot spawn_model_server.py
 pkill ros
-sleep 10
+pkill roscore
+pkill gzserver
 pkill gzclient
