@@ -1,25 +1,12 @@
-from pathlib import Path
 import random
 from regolobot.srv import SpawnModel
 from gazebo_ros.gazebo_interface import DeleteModel
 import math
-import rospy
-import json
 
+import rospy
 
 class MathStick:
-    def __init__(
-        self,
-        category,
-        number,
-        x,
-        y,
-        z,
-        roll=math.pi,
-        pitch=math.pi / 2,
-        yaw=0,
-        base_model_path="",
-    ):
+    def __init__(self, category, number, x, y, z, roll=math.pi, pitch=math.pi/2, yaw=0, base_model_path=""):
         self.category = category
         self.number = number
         self.x = x
@@ -30,40 +17,20 @@ class MathStick:
         self.yaw = yaw
         self.spawned = False
         self.base_model_path = base_model_path
-
+    
     @property
     def name(self):
         return f"math_stick{self.number}"
-
+    
     @property
     def file(self):
         return f"{self.base_model_path}{self.category}/model.sdf"
 
-    def label_dict(self):
-        label_dict = {
-            "category": self.category,
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-            "roll": self.roll,
-            "pitch": self.pitch,
-            "yaw": self.yaw,
-        }
-        return label_dict
-
-
 class MathStickManager:
-    def __init__(
-        self,
-        spawner_proxy: SpawnModel,
-        delete_proxy: DeleteModel,
-        categories_count: int,
-        base_model_path: str,
-        **kwargs,
-    ):
+    def __init__(self, spawner_proxy: SpawnModel, delete_proxy: DeleteModel, categories_count: int, base_model_path: str, **kwargs):
         self.spawner_proxy = spawner_proxy
         self.delete_proxy = delete_proxy
-        self.categories = [i for i in range(1, categories_count + 1)]
+        self.categories = [i for i in range(1, categories_count+1)]
         self.spawned_models = []
         self.spawned_counter = 0
         self.base_model_path = base_model_path
@@ -76,9 +43,10 @@ class MathStickManager:
         self.min_roll = kwargs.get("min_roll", 0)
         self.max_roll = kwargs.get("max_roll", 2 * math.pi)
         self.min_pitch = kwargs.get("min_pitch", 0)
-        self.max_pitch = kwargs.get("max_pitch", math.pi / 2)
+        self.max_pitch = kwargs.get("max_pitch", math.pi/2)
         self.min_yaw = kwargs.get("min_yaw", 0)
         self.max_yaw = kwargs.get("max_yaw", 0)
+    
 
     def generate_coordinates(self):
         x = random.uniform(self.min_x, self.max_x)
@@ -97,10 +65,8 @@ class MathStickManager:
         number = self.spawned_counter
         x, y, z = self.generate_coordinates()
         roll, pitch, yaw = self.generate_angles()
-        return MathStick(
-            category, number, x, y, z, roll, pitch, yaw, self.base_model_path
-        )
-
+        return MathStick(category, number, x, y, z, roll, pitch, yaw, self.base_model_path)
+    
     def spawn(self, math_stick: MathStick):
         name = math_stick.name
         file = math_stick.file
@@ -118,27 +84,15 @@ class MathStickManager:
         except rospy.ServiceException as e:
             rospy.loginfo(f"Error while calling Spawn Model Service. Details: {e}")
         return self.spawned_counter
-
-    def current_labels(self):
-        labels = []
-        for stick in self.spawned_models:
-            labels.append(stick.label_dict())
-        return labels
-
-    def save_labels(self, output_path: Path):
-        with open(output_path, "w") as f:
-            json.dump(self.current_labels(), f)
-
+    
     def delete(self, name: str):
         try:
             self.delete_proxy(name)
             rospy.loginfo(f"Deleted model {name}")
-            self.spawned_models = [
-                model for model in self.spawned_models if model.name != name
-            ]
+            self.spawned_models = [model for model in self.spawned_models if model.name != name]
         except rospy.ServiceException as e:
             rospy.loginfo(f"Error while calling Delete Model Service. Details: {e}")
-
+    
     def delete_all(self):
         for model in [m for m in self.spawned_models]:
             self.delete(model.name)
