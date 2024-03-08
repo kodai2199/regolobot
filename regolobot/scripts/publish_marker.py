@@ -9,7 +9,7 @@ marker_pub = rospy.Publisher("/visualization_marker", Marker, queue_size = 2)
 
 marker = Marker()
 
-marker.header.frame_id = "/map"
+marker.header.frame_id = "map"
 marker.header.stamp = rospy.Time.now()
 
 # set shape, Arrow: 0; Cube: 1 ; Sphere: 2 ; Cylinder: 3
