@@ -10,12 +10,12 @@ from pathlib import Path
 
 # I can only assume, given that I could not find this information anywhere, that a "unit" in Gazebo is 1 meter by convention
 
-# TODO export GAZEBO_MODEL_PATH = package/models dir
 # https://answers.ros.org/question/404423/whats-the-correct-way-to-load-mesh-files-in-gazebo-and-rviz/
 # FOR SCALING https://answers.gazebosim.org/question/16774/resize-simple-objects-to-specific-sizes/
 
-BASE_MODEL_PATH = "/home/ros/ws_moveit/src/regolobot/models/mathstick"
-BASE_OUTPUT_DIR = Path("/home/ros/ws_moveit/src/regolobot/train")
+
+BASE_MODEL_PATH = str(Path.cwd() / "src/regolobot/models/mathstick")
+BASE_OUTPUT_DIR = Path.cwd() / "src/regolobot/train"
 # RANDOM COORDINATES BOUNDARIES
 boundaries = {
     "min_x": -0.7,
