@@ -105,36 +105,27 @@ class MyRobot:
         rospy.loginfo("\033[32m" + "Now at Pose: {}".format(arg_pose_name) + "\033[0m")
 
     def move_ee(self, x, y, z):
-        pose_start = self._group.get_current_pose().pose
-        pose_start.position.x += 0.001
-        pose_start.position.y += 0.001
-        pose_start.position.z += 0.001
-
-
         pose_goal = geometry_msgs.msg.Pose()
-        pose_goal.orientation.w = 1
-        pose_goal.orientation.x = 0
-        pose_goal.orientation.y = 0
-        pose_goal.orientation.z = 0
+        pose_goal.orientation.w = 0.5
+        pose_goal.orientation.x = 0.5
+        pose_goal.orientation.y = 0.5
+        pose_goal.orientation.z = -0.5
         pose_goal.position.x = x
         pose_goal.position.y = y
         pose_goal.position.z = z
-        # pose_goal.orientation.
 
-        self._group.set_planner_id("RRTConnect")
-        # self._group.set_pose_target(pose_goal)
         self._group.stop()
         self._group.clear_pose_targets()
+        self._group.set_planner_id("PRMstar")
+        self._group.set_pose_target(pose_goal)
 
-        plan, fraction = self._group.compute_cartesian_path([pose_start, pose_goal], 0.005, 0)
+        plan_success, plan, planning_time, error_code = self._group.plan()
         goal = moveit_msgs.msg.ExecuteTrajectoryGoal()
         # Update the trajectory in the goal message
         goal.trajectory = plan
         # Send the goal to the action server
         self._exectute_trajectory_client.send_goal(goal)
         self._exectute_trajectory_client.wait_for_result()
-        self._group.stop()
-        self._group.clear_pose_targets()
 
     # Class Destructor
     def __del__(self):
@@ -149,7 +140,7 @@ def main():
     arm = MyRobot("manipulator")
     hand = MyRobot("gripper")
     print(type(arm._group))
-    arm.move_ee(0.3, 0.5, 1)
+    arm.move_ee(0.6, 0.65, 1.2)
     # call the function to set the position to "zero_pose"
 
     # Wait for 2 seconds

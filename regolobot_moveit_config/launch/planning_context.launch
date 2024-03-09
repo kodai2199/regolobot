@@ -20,7 +20,7 @@
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
   <group ns="$(arg robot_description)_kinematics">
     <rosparam command="load" file="$(find regolobot_moveit_config)/config/kinematics.yaml"/>
-
+    <rosparam command="load" ns="manipulator" file="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
   </group>
 
 </launch>

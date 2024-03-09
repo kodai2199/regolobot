@@ -219,10 +219,10 @@
         </link>
       </model>
       <model name='kinect'>
-        <pose>0 0.55 2 1.57079 1.57079 3.14159</pose>
+        <pose>0 0.55 2.5 1.57079 1.57079 3.14159</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>0 0.55 2.25 1.57079 1.57079 3.14159</pose>
+          <pose>0 0.55 2.5 1.57079 1.57079 3.14159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>

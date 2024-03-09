@@ -49,13 +49,18 @@ def loop():
     except rospy.ServiceException as e:
         rospy.loginfo(f"Error while preparing service. Details {e}")
         return
-    color_converter = ImageConverter("/camera/color/image_raw", color_path)
-    depth_converter = ImageConverter("/camera/depth/image_raw", depth_path, depth=True)
+    epochs = int(input("How many training images do you want to create? "))
+    start_epoch = int(input("Image to resume from? "))
+    color_converter = ImageConverter(
+        "/camera/color/image_raw", color_path, counter=start_epoch
+    )
+    depth_converter = ImageConverter(
+        "/camera/depth/image_raw", depth_path, depth=True, counter=start_epoch
+    )
     stick_manager = MathStickManager(
         spawn_model_proxy, delete_model_proxy, 10, BASE_MODEL_PATH, **boundaries
     )
 
-    epochs = int(input("How many training images do you want to create? "))
     min_mathsticks = int(
         input(
             "What is the MINIMUM amount of mathsticks would you like to spawn in each image? "
@@ -67,7 +72,7 @@ def loop():
         )
     )
     while not rospy.is_shutdown():
-        for epoch in range(0, epochs):
+        for epoch in range(start_epoch - 1, epochs):
             number = random.randrange(min_mathsticks, max_mathsticks + 1)
             stick_manager.delete_all()
             for _ in range(number):
@@ -75,9 +80,11 @@ def loop():
             print(
                 f"Spawned {len(stick_manager.spawned_models)} mathsticks for image {epoch + 1}"
             )
+            rospy.sleep(0.6)
             stick_manager.save_labels(label_path / f"{epoch+1}.txt")
             color_converter.save()
             depth_converter.save()
+            rospy.sleep(0.4)
         stick_manager.delete_all()
         break
 
