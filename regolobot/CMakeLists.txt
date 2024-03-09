@@ -161,6 +161,9 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/spawn_model_server.py
   scripts/simulation_controller.py
+  scripts/publish_marker.py
+  scripts/publish_collision_object.py
+  scripts/train_controller.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
