@@ -23,7 +23,7 @@ boundaries = {
     "min_y": 0.3,
     "max_y": 0.9,
     "min_z": 0.92,
-    "max_z": 1,
+    "max_z": 0.93,
     "min_roll": 0,
     "max_roll": math.pi,
     "min_pitch": math.pi / 2,

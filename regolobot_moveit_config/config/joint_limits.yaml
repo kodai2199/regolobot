@@ -20,6 +20,8 @@ joint_limits:
   robotiq_85_left_knuckle_joint:
     has_velocity_limits: true
     max_velocity: 0.5
+    has_effort_limits: true
+    max_effort: 0.1
     has_acceleration_limits: false
     max_acceleration: 0
   shoulder_lift_joint:

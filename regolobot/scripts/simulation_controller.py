@@ -11,12 +11,12 @@ BASE_MODEL_PATH = str(Path.cwd() / "src/regolobot/models/mathstick")
 
 # RANDOM COORDINATES BOUNDARIES
 boundaries = {
-    "min_x": -0.7,
-    "max_x": 0.7,
-    "min_y": 0.3,
+    "min_x": -0.8,
+    "max_x": 0.8,
+    "min_y": 0.2,
     "max_y": 0.9,
-    "min_z": 0.92,
-    "max_z": 1,
+    "min_z": 0.911,
+    "max_z": 0.915,
     "min_roll": 0,
     "max_roll": math.pi,
     "min_pitch": math.pi / 2,

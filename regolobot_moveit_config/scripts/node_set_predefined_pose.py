@@ -140,7 +140,7 @@ def main():
     arm = MyRobot("manipulator")
     hand = MyRobot("gripper")
     print(type(arm._group))
-    arm.move_ee(0.6, 0.65, 1.2)
+    arm.move_ee(0, 0.5, 1.2)
     # call the function to set the position to "zero_pose"
 
     # Wait for 2 seconds

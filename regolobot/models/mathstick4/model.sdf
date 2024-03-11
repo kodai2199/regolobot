@@ -6,7 +6,7 @@
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>model://mathstick1/meshes/MathStick1.stl</uri>
+            <uri>model://mathstick4/meshes/MathStick4.stl</uri>
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
@@ -36,12 +36,12 @@
       <inertial>
         <mass>0.02</mass> 
         <inertia>
-          <ixx>1</ixx> 
+          <ixx>0.00000283333333333333</ixx> 
           <ixy>0.0</ixy>
           <ixz>0.0</ixz>
-          <iyy>1</iyy>
+          <iyy>0.000000333333333333333</iyy>
           <iyz>0.0</iyz>
-          <izz>1</izz>
+          <izz>0.00000283333333333333</izz>
         </inertia>
       </inertial>
     </link>
