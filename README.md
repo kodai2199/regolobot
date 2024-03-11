@@ -28,7 +28,7 @@ Inside the catkin workspace, run the following command to start the simulation:
 
 ### World
 
-The environment that we created on gazebo in the file [regolobot.world](regolobot/regolobot.world) simply consists in a table, that rapresent the working area, and a pedestal with the UR5 on it. We also added a kinect camera for vision purposes.
+The environment that we created on gazebo in the file [regolobot.world](regolobot/regolobot.world) simply consists of a table, that rapresents the working area, and a pedestal with the UR5 robot on it. We also added a kinect camera for vision purposes.
 
 ![environment](images/environment.jpg)
 
@@ -56,9 +56,19 @@ The vision system we set up, utilizes the Gazbos's [kinect camera](regolobot/mod
 
 `class_index, x1, y1, x2, y2, x3, y3, x4, y4`
 
-The classes goes from MS01 to MS10 and rapresent the math stick type (therefore color and lenght), while the coordinates are the 4 corners of the bounding box.
+The classes go from MS01 to MS10 and rapresent the math stick type (therefore color and lenght), while the coordinates are the 4 corners of the bounding box.
 
 ![bb](images/1664.png)
 
 ### Core algorithm + pick and place task
 
+Once the math sticks specified are spawned, the system will ask you to enter the desired number to rapresent.
+
+
+- init robot
+- set home pos
+- spawn regoli
+- enter number
+- recognize regoli
+- lancia algoritmo back tracking
+- esegui pick and place
