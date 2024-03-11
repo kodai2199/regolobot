@@ -10,6 +10,15 @@
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <!-- Set the friction coefficients -->
+              <mu>100.0</mu> <!-- Adjust the value as needed -->
+              <mu2>100.0</mu2> <!-- Adjust the value as needed -->
+            </ode>
+          </friction>
+        </surface>
       </collision>
       <visual name="visual">
         <geometry>
@@ -39,3 +48,4 @@
     </link>
   </model>
 </sdf>
+

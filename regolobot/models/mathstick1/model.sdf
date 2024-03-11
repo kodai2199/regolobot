@@ -10,6 +10,14 @@
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>100.0</mu> <!-- High coefficient of friction -->
+              <mu2>100.0</mu2> <!-- High coefficient of friction -->
+            </ode>
+          </friction>
+        </surface>
       </collision>
       <visual name="visual">
         <geometry>

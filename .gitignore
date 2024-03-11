@@ -3,4 +3,5 @@ universal_robot
 .rosinstall.bak
 .vscode
 regolobot/train
+regolobot/scripts
 *__pycache__*
