@@ -46,6 +46,9 @@ class Solution:
         self._last_is_op = True
 
     def remove(self):
+        if len(self._hierarchy) == 0:
+            self._last_is_op = True
+            return
         if not self._last_is_op:
             self._hierarchy[-1].pop()
             self._last_is_op = True
@@ -59,6 +62,8 @@ class Solution:
         self._hierarchy = []
 
     def simplify(self):
+        if len(self._hierarchy) == 0:
+            return
         if self._last_is_op and len(self._hierarchy[-1]) == 0:
             self._hierarchy.pop()
         self._last_is_op = False
@@ -98,6 +103,8 @@ class Solution:
 
     @property
     def last_op(self):
+        if len(self._hierarchy) == 0:
+            return "+"
         if len(self._hierarchy[-1]) == 0:
             return "+"
         return "*"
@@ -141,9 +148,6 @@ def backtrack_solution(
     best_solution: Solution = None,
     offset=0,
 ) -> Solution:
-    if len(math_sticks) == 0:
-        return best_solution
-
     if solution is None:
         solution = Solution(math_sticks)
 
@@ -163,6 +167,9 @@ def backtrack_solution(
         # is sorted and we start with products.
         return best_solution.copy()
 
+    if len(math_sticks) == 0:
+        return best_solution
+
     # Prune if current solution + or - a stick is > target
     # Avoid multiplication with 1s
     for i, stick in enumerate(math_sticks):
@@ -180,14 +187,22 @@ def backtrack_solution(
             offset=i + 1 + offset,
         )
         if best_solution is not None and best_solution.value == target:
-            break
+            return best_solution
         solution.remove()
+        solution.remove()
+
+    for i, stick in enumerate(math_sticks):
+        if stick > target:
+            continue
+        if stick == 1 and solution.last_op == "*":
+            continue
+        solution.add_stick(i + offset)
         solution.add_operator("+")
         best_solution = backtrack_solution(
             math_sticks[i + 1 :], target, solution, best_solution, offset=i + 1 + offset
         )
         if best_solution is not None and best_solution.value == target:
-            break
+            return best_solution
         solution.remove()
         solution.remove()
     return best_solution
@@ -195,7 +210,32 @@ def backtrack_solution(
 
 if __name__ == "__main__":
 
-    math_sticks = [10, 10, 10, 9, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 5, 5, 4, 3, 3, 1, 1, 1]
+    # math_sticks = [10, 10, 10, 9, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 5, 5, 4, 3, 3, 1, 1, 1]
+    math_sticks = [
+        10,
+        10,
+        10,
+        9,
+        9,
+        9,
+        9,
+        8,
+        8,
+        8,
+        7,
+        7,
+        7,
+        6,
+        5,
+        5,
+        4,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+    ]
     exit = False
     while not exit:
         target = input('Insert target number, or "exit" to exit: ')

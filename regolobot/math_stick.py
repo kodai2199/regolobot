@@ -92,14 +92,44 @@ class MathStickManager:
         yaw = random.uniform(self.min_yaw, self.max_yaw)
         return roll, pitch, yaw
 
-    def random(self):
-        category = random.choice(self.categories)
+    def collides(self, other: MathStick):
+        for stick in self.spawned_models:
+            # for every stick, consider a square
+            # area around it equal to the stick's height
+            center_x = stick.x
+            center_y = stick.y
+            height = 0.01 * stick.category
+            other_height = 0.01 * other.category
+            distance = math.sqrt((other.x - center_x) ** 2 + (other.y - center_y) ** 2)
+            if distance < height + other_height:
+                return True
+        return False
+
+    def random(self, category=None):
+        category = category or random.choice(self.categories)
         number = self.spawned_counter
-        x, y, z = self.generate_coordinates()
-        roll, pitch, yaw = self.generate_angles()
-        return MathStick(
-            category, number, x, y, z, roll, pitch, yaw, self.base_model_path
-        )
+        m = None
+        while m is None or self.collides(m):
+            x, y, z = self.generate_coordinates()
+            roll, pitch, yaw = self.generate_angles()
+            m = MathStick(
+                category, number, x, y, z, roll, pitch, yaw, self.base_model_path
+            )
+        return m
+
+    def random_within(self, r, category=None):
+        category = category or random.choice(self.categories)
+        number = self.spawned_counter
+        m = None
+        while m is None or self.collides(m):
+            x, y, z = self.generate_coordinates()
+            roll, pitch, yaw = self.generate_angles()
+            while x**2 + y**2 > r:
+                x, y, z = self.generate_coordinates()
+            m = MathStick(
+                category, number, x, y, z, roll, pitch, yaw, self.base_model_path
+            )
+        return m
 
     def spawn(self, math_stick: MathStick):
         name = math_stick.name
