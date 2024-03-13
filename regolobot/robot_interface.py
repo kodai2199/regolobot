@@ -54,13 +54,13 @@ class Regolobot:
             f"{Fore.LIGHTMAGENTA_EX}MyRobot initialization is done.{Style.RESET_ALL}"
         )
 
-    def set_pose(self, arg_pose_name):
+    def set_pose(self, arg_pose_name, time=3):
         rospy.loginfo(f"{Fore.GREEN}Going to Pose: {arg_pose_name}{Style.RESET_ALL}")
 
         # for moveit_commander member functions in Python 3 (For Noetic), please refer: https://docs.ros.org/en/noetic/api/moveit_commander/html/functions_func.html
         # Python file with function definitions: https://github.com/ros-planning/moveit/blob/master/moveit_commander/src/moveit_commander/move_group.py
         # Python file with function definitions (for Noetic): https://docs.ros.org/en/noetic/api/moveit_commander/html/move__group_8py_source.html
-
+        self._group.set_planning_time(time)
         self._group.set_named_target(arg_pose_name)
 
         plan_success, plan, planning_time, error_code = self._group.plan()
@@ -94,20 +94,20 @@ class Regolobot:
         pose1_rpy = euler_from_quaternion(q1)
         pose2_rpy = euler_from_quaternion(q2)
         orientation_errors = [
-            abs(pose1_rpy[0] - pose2_rpy[0]) % math.pi for i in range(len(pose1_rpy))
+            abs(pose1_rpy[i] - pose2_rpy[i]) % math.pi for i in range(len(pose1_rpy))
         ]
         return max(pos_errors), max(orientation_errors)
 
-    def is_stationary(self, tolerance_pos=0.001, tolerance_ori=0.01):
+    def is_stationary(self, tolerance_pos=0.01, tolerance_ori=0.01):
         pose_1 = self._group.get_current_pose().pose
         rospy.sleep(0.01)
         pose_2 = self._group.get_current_pose().pose
         pos_error, ori_error = self.pose_error(pose_1, pose_2)
-        print(f"From is stationary: {pos_error}, {ori_error}")
+        # print(f"From is stationary: {pos_error}, {ori_error}")
         return pos_error < tolerance_pos and ori_error < tolerance_ori
 
     def safe_move_ee(
-        self, x, y, z, roll=0, pitch=0, yaw=0, tolerance_pos=0.01, tolerance_ori=2
+        self, x, y, z, roll=0, pitch=0, yaw=0, tolerance_pos=0.02, tolerance_ori=100
     ):
         # Works for RPY only since the default is to use xyz axes instead of zyz
         q = quaternion_from_euler(roll, pitch, yaw)
@@ -121,19 +121,22 @@ class Regolobot:
         self._group.clear_pose_targets()
         current_pose = self._group.get_current_pose().pose
         pos_error, ori_error = self.pose_error(current_pose, pose_goal)
+        start_timeout = 2
         while pos_error > tolerance_pos or ori_error > tolerance_ori:
             wait_counter = 0
-            print(pos_error, ori_error)
-            self.move_ee(pose_goal)
+            # print(pos_error, ori_error)
+            self.move_ee(pose_goal, start_timeout)
             current_pose = self._group.get_current_pose().pose
-            while not self.is_stationary() and wait_counter < 3:
+            while not self.is_stationary() and wait_counter < 2:
                 rospy.sleep(0.05)
                 wait_counter += 0.05
-            if wait_counter >= 3:
+            if wait_counter >= 2:
                 self._group.stop()
             pos_error, ori_error = self.pose_error(current_pose, pose_goal)
+            start_timeout *= 2
 
-    def move_ee(self, pose_goal):
+    def move_ee(self, pose_goal, time=3):
+        self._group.set_planning_time(time)
         self._group.set_planner_id("PRMstar")
         self._group.set_start_state_to_current_state()
         self._group.set_pose_target(pose_goal)

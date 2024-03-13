@@ -28,7 +28,7 @@
         <joint name="robotiq_85_left_knuckle_joint" value="0.1"/>
     </group_state>
     <group_state name="closed" group="gripper">
-        <joint name="robotiq_85_left_knuckle_joint" value="0.78"/>
+        <joint name="robotiq_85_left_knuckle_joint" value="0.798"/>
     </group_state>
     <group_state name="home" group="manipulator">
         <joint name="elbow_joint" value="-1.5708"/>

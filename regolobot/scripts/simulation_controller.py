@@ -9,6 +9,9 @@ from pathlib import Path
 from math_stick import MathStickManager
 from image_processing import ImageConverter
 from robot_interface import Regolobot
+from moveit_msgs.msg import CollisionObject
+from shape_msgs.msg import SolidPrimitive
+from geometry_msgs.msg import Pose
 from prediction_client import predict_image
 from solution import Solution, backtrack_solution
 
@@ -54,6 +57,7 @@ def current_value(labels: list):
 
 
 def input_spawn_parameters():
+    print("\033[H\033[J", end="")
     math_sticks = None
     choice = input(
         "Would you like to choose the math sticks to spawn? (yes/no). If you choose 'no' they will spawn randomly. Type 'exit' to stop: "
@@ -85,7 +89,7 @@ def input_target():
 
 def addend_height(addend):
     factors = len(addend)
-    return 0.01 * factors + 0.05 * (factors - 1)
+    return 0.01 * factors + 0.04 * (factors - 1)
 
 
 def addend_width(addend, labels):
@@ -94,9 +98,42 @@ def addend_width(addend, labels):
     return 0.01 * max_factor
 
 
+def publish_table():
+    # Create CollisionObject message
+    collision_object = CollisionObject()
+    collision_object.header.frame_id = "world"
+
+    collision_object.id = "table"
+
+    # Define a box to add to the world
+    primitive = SolidPrimitive()
+    primitive.type = primitive.BOX
+    primitive.dimensions = [1.8, 0.9, 0.9]
+
+    # A pose for the box (specified relative to frame_id)
+    box_pose = Pose()
+    box_pose.orientation.w = 1.0
+    box_pose.position.x = 0
+    box_pose.position.y = 0.55
+    box_pose.position.z = 0.45
+
+    collision_object.primitives.append(primitive)
+    collision_object.primitive_poses.append(box_pose)
+    collision_object.operation = CollisionObject.ADD
+
+    # Create a list of CollisionObject
+    collision_objects = [collision_object]
+
+    # Publish CollisionObject to MoveIt
+    collision_object_publisher = rospy.Publisher(
+        "/collision_object", CollisionObject, queue_size=10, latch=True
+    )
+    collision_object_publisher.publish(collision_object)
+
+
 def execute_solution(arm, gripper, solution: Solution, labels, start_x, center_y):
     arm.set_pose("home")
-    gripper.set_pose("open")
+    gripper.set_pose("open", 1)
     rospy.sleep(1)
     # 1. Determine max solution height
     max_height = max([addend_height(addend) for addend in solution._hierarchy])
@@ -112,7 +149,7 @@ def execute_solution(arm, gripper, solution: Solution, labels, start_x, center_y
     for addend in solution._hierarchy:
         length += addend_width(addend, labels)
     # Space between addends
-    length += 0.05 * (len(solution._hierarchy) - 1)
+    length += 0.02 * (len(solution._hierarchy) - 1)
     print(f"Total length {length}")
     if length < 0:
         raise ValueError("Solution length is negative. There was surely an error.")
@@ -121,40 +158,51 @@ def execute_solution(arm, gripper, solution: Solution, labels, start_x, center_y
 
     current_x = start_x
     for addend in solution._hierarchy:
-        if len(addend) == 1:
-            # Element must be placed vertically
-            continue
         height = addend_height(addend)
         current_y = center_y - height / 2
         for factor in addend:
-            gripper.set_pose("open")
-            rospy.sleep(1)
+            gripper.set_pose("open", 2)
             stick = labels[factor]
             roll = stick.get("roll", 0)
             pitch = math.pi / 2
             yaw = stick.get("yaw", 0)
-            print(stick)
+
             # 3. Move to the stick
             # arm.move_ee(stick["x"], stick["y"], 1.15, roll, pitch, yaw)
-            arm.safe_move_ee(stick["x"], stick["y"], 1.07, roll, pitch, yaw)
-            gripper.set_pose("closed")
-            rospy.sleep(1.5)
-            arm.safe_move_ee(stick["x"], stick["y"], 1.15, roll, pitch, yaw)
-            arm.safe_move_ee(current_x, current_y, 1.15, roll, pitch, 0)
-            arm.safe_move_ee(current_x, current_y, 1.07, roll, pitch, 0)
-            gripper.set_pose("open")
-            rospy.sleep(1.5)
-            arm.safe_move_ee(current_x, current_y, 1.15, roll, pitch, 0)
+            arm.safe_move_ee(stick["x"], stick["y"], 1.066, roll, pitch, yaw)
+            gripper.set_pose("closed", 1)
+            rospy.sleep(1)
+
+            if len(addend) == 1:
+                # Element must be placed vertically
+                # since it's just a sum
+                target_yaw = math.pi / 2
+            else:
+                target_yaw = 0
+            arm.safe_move_ee(
+                (stick["x"] + current_x) / 2,
+                (current_y + stick["y"]) / 2,
+                1.4,
+                roll,
+                pitch,
+                (target_yaw + yaw) / 2,
+            )
+            arm.safe_move_ee(current_x, current_y, 1.07, roll, pitch, target_yaw)
+            gripper.set_pose("open", 2)
+            rospy.sleep(1)
+            arm.safe_move_ee(current_x, current_y, 1.25, roll, pitch, 0)
             # arm.move_ee(0, 0.55, 1.15, roll, pitch, 0)
             # 5. Move to the next addend
-            current_y += 0.06
-        current_x += addend_width(addend, labels) + 0.05
+            current_y += 0.05
+        current_x += addend_width(addend, labels) + 0.02
+    arm.set_pose("zero_pose")
 
 
 def loop():
     rospy.loginfo("Waiting for Spawn Model Service to be ready")
     rospy.wait_for_service("regolobot/spawn_model")
     rospy.init_node("simulation_controller")
+    publish_table()
 
     try:
         spawn_model_proxy = rospy.ServiceProxy("regolobot/spawn_model", SpawnModel)
@@ -207,23 +255,17 @@ def loop():
             # TODO Error if e not in range (1, 11)
             for e in math_sticks:
                 stick_manager.spawn(stick_manager.random_within(0.8, category=e))
-        rospy.sleep(0.5)
-        print(f"Spawned {len(stick_manager.spawned_models)} mathsticks")
+        rospy.sleep(1)
         math_sticks.sort(reverse=True)
+        print(f"Spawned {len(stick_manager.spawned_models)} math sticks: {math_sticks}")
 
         # Check for correspondence with recognition
         success, labels = predict_image(color_converter.latest)
         labels.sort(key=lambda e: (e["category"]), reverse=True)
         if success:
-            print(math_sticks)
-            print([l["category"] for l in labels])
-            if len(labels) != len(math_sticks):
-                print("Some sticks were not detected. Please try again.")
-                continue
-            for i in range(len(labels)):
-                if labels[i]["category"] != math_sticks[i]:
-                    print("Some sticks were not detected. Please try again.")
-                    continue
+            print(
+                f"The system detected the following math sticks: {[l['category'] for l in labels]}"
+            )
         else:
             print("Network or image acquisition error. Please try again.")
             continue
@@ -233,6 +275,7 @@ def loop():
         if target is None:
             continue
         print(f"Target: {target}")
+        math_sticks = [l["category"] for l in labels]
         solution = backtrack_solution(math_sticks, target)
         if solution is None:
             print("The selected target cannot be reached using available sticks")

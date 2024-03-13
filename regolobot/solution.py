@@ -147,6 +147,7 @@ def backtrack_solution(
     solution: Solution = None,
     best_solution: Solution = None,
     offset=0,
+    approximate=True,
 ) -> Solution:
     if solution is None:
         solution = Solution(math_sticks)
@@ -161,10 +162,7 @@ def backtrack_solution(
         best_solution.simplify()
         return best_solution
 
-    if best_solution is not None and best_solution.value == target:
-        # If we found a solution having a correct value, then it is
-        # automatically the best solution, since the math_sticks list
-        # is sorted and we start with products.
+    if approximate and best_solution is not None and best_solution.value == target:
         return best_solution.copy()
 
     if len(math_sticks) == 0:
@@ -185,9 +183,11 @@ def backtrack_solution(
             solution,
             best_solution,
             offset=i + 1 + offset,
+            approximate=approximate,
         )
-        if best_solution is not None and best_solution.value == target:
-            return best_solution
+        if approximate and best_solution is not None and best_solution.value == target:
+            best_solution.simplify()
+            return best_solution.copy()
         solution.remove()
         solution.remove()
 
@@ -199,10 +199,16 @@ def backtrack_solution(
         solution.add_stick(i + offset)
         solution.add_operator("+")
         best_solution = backtrack_solution(
-            math_sticks[i + 1 :], target, solution, best_solution, offset=i + 1 + offset
+            math_sticks[i + 1 :],
+            target,
+            solution,
+            best_solution,
+            offset=i + 1 + offset,
+            approximate=approximate,
         )
-        if best_solution is not None and best_solution.value == target:
-            return best_solution
+        if approximate and best_solution is not None and best_solution.value == target:
+            best_solution.simplify()
+            return best_solution.copy()
         solution.remove()
         solution.remove()
     return best_solution
@@ -239,11 +245,17 @@ if __name__ == "__main__":
     exit = False
     while not exit:
         target = input('Insert target number, or "exit" to exit: ')
+        approximate = input("Approximate solution? (yes/no): ").lower()
+        if approximate == "yes" or approximate == "y":
+            approximate = True
+        else:
+            approximate = False
+
         if target == "exit":
             break
         else:
             target = int(target)
-        s = backtrack_solution(math_sticks, target)
+        s = backtrack_solution(math_sticks, target, approximate=approximate)
         if s is None:
             print("No solution found")
         else:

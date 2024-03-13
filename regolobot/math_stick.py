@@ -109,19 +109,22 @@ class MathStickManager:
         category = category or random.choice(self.categories)
         number = self.spawned_counter
         m = None
-        while m is None or self.collides(m):
+        counter = 0
+        while m is None or self.collides(m) and counter < 20:
             x, y, z = self.generate_coordinates()
             roll, pitch, yaw = self.generate_angles()
             m = MathStick(
                 category, number, x, y, z, roll, pitch, yaw, self.base_model_path
             )
+            counter += 1
         return m
 
     def random_within(self, r, category=None):
         category = category or random.choice(self.categories)
         number = self.spawned_counter
         m = None
-        while m is None or self.collides(m):
+        counter = 0
+        while m is None or self.collides(m) and counter < 20:
             x, y, z = self.generate_coordinates()
             roll, pitch, yaw = self.generate_angles()
             while x**2 + y**2 > r:
@@ -129,6 +132,7 @@ class MathStickManager:
             m = MathStick(
                 category, number, x, y, z, roll, pitch, yaw, self.base_model_path
             )
+            counter += 1
         return m
 
     def spawn(self, math_stick: MathStick):
@@ -142,7 +146,7 @@ class MathStickManager:
         yaw = math_stick.yaw
         try:
             self.spawner_proxy(name, file, x, y, z, roll, pitch, yaw, 0, 0, 0)
-            rospy.loginfo(f"Spawned a new math stick: {name}")
+            # rospy.loginfo(f"Spawned a new math stick: {name}")
             self.spawned_models.append(math_stick)
             self.spawned_counter += 1
             rospy.sleep(0.5)
@@ -163,7 +167,7 @@ class MathStickManager:
     def delete(self, name: str):
         try:
             self.delete_proxy(name)
-            rospy.loginfo(f"Deleted model {name}")
+            # rospy.loginfo(f"Deleted model {name}")
             self.spawned_models = [
                 model for model in self.spawned_models if model.name != name
             ]

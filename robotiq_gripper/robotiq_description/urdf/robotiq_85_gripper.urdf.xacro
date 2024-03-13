@@ -259,18 +259,18 @@
     
     <!-- Improve grasping physics -->
     <gazebo reference="${prefix}robotiq_85_left_finger_tip_link">
-      <kp>100.0</kp>
-      <kd>0.2</kd>
-      <mu1>100.0</mu1>
-      <mu2>100.0</mu2>
-      <minDepth>0.001</minDepth>
+      <kp>500.0</kp>
+      <kd>0.1</kd>
+      <mu1>10000.0</mu1>
+      <mu2>10000.0</mu2>
+      <minDepth>0.0</minDepth>
     </gazebo>
     <gazebo reference="${prefix}robotiq_85_right_finger_tip_link">
-      <kp>100.0</kp>
-      <kd>0.2</kd>
-      <mu1>100.0</mu1>
-      <mu2>100.0</mu2>
-      <minDepth>0.001</minDepth>
+      <kp>500.0</kp>
+      <kd>0.1</kd>
+      <mu1>10000.0</mu1>
+      <mu2>10000.0</mu2>
+      <minDepth>0.0</minDepth>
     </gazebo>
     
     <xacro:robotiq_85_gripper_transmission prefix="${prefix}" />
