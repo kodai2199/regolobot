@@ -60,15 +60,18 @@ The classes go from MS01 to MS10 and rapresent the math stick type (therefore co
 
 ![bb](images/1664.png)
 
-### Core algorithm + pick and place task
+There is a server Flask running on one of our pc at this [URL](https://regolonet.mgteam.one/predict) that will sends as output the predicted labels.
 
-Once the math sticks specified are spawned, the system will ask you to enter the desired number to rapresent.
+### Core algorithm
 
+In the [solution.py](regolobot/solution.py) file, is implemented a back tracking algorithm that outputs a list rapresenting the layout of the (approximate) optimal solution.  
+We have come up with a system for rapresenting numbers using math sticks that also involves multiplication and addition: when the math sticks are arranged vertically, it indicates addition, while when they are arranged horizontally, it signifies multiplication.  
+For example, with these inputs:
 
-- init robot
-- set home pos
-- spawn regoli
-- enter number
-- recognize regoli
-- lancia algoritmo back tracking
-- esegui pick and place
+![inputs](images/inputs.png)
+
+The number 942 can be rapresented as: 
+
+![result_example](images/result_example.png)
+
+See the [regolobot.mkv](regolobot.mkv) video for a demonstration of the UR5 disposing the math sticks.
